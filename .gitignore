@@ -1,9 +1,10 @@
 # Dependencies
 node_modules/
+/frontend/node_modules/
 
 # Build output and tooling caches
-/dist/
-/build/
+/frontend/dist/
+/frontend/build/
 /backend/dist/
 .vite/
 .cache/
@@ -11,9 +12,9 @@ node_modules/
 vite.config.*.timestamp-*
 
 # Local environment files (keep example templates)
-/.env
-/.env.*
-!/.env.example
+/frontend/.env
+/frontend/.env.*
+!/frontend/.env.example
 /backend/.env
 /backend/.env.*
 !/backend/.env.example

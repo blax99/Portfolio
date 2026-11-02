@@ -12,7 +12,7 @@ const { createMongoStore } = require("./mongodbStore")
 dotenv.config({ path: path.join(__dirname, ".env") })
 
 const dataPath = path.join(__dirname, "data", "content.json")
-const webPath = path.resolve(__dirname, "../dist")
+const webPath = path.resolve(__dirname, "../frontend/dist")
 const store = process.env.MONGODB_URI
   ? createMongoStore(process.env.MONGODB_URI)
   : createJsonStore(dataPath)
