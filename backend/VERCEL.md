@@ -20,7 +20,7 @@ function serves the API at `/api/*`.
 ## Frontend project
 
 Create a separate Vercel project with `frontend` as its Root Directory. Set
-`VITE_API_BASE_URL` to the backend project's origin, for example
+`API_BASE_URL` to the backend project's origin, for example
 `https://your-backend.vercel.app`, then redeploy. The frontend will send API
 requests to that origin.
 

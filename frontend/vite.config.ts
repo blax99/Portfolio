@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
   const emitSourcemaps = mode === "development"
 
   return {
+    envPrefix: ["VITE_", "API_BASE_URL"],
     base: process.env.FIGMA_PUBLIC_URL
       ? `${process.env.FIGMA_PUBLIC_URL}/`
       : "/",
