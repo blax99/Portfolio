@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { apiUrl } from "../utils/apiUrl"
 
 interface ApiResourceState<T> {
   data: T | null
@@ -19,7 +20,7 @@ export default function useApiResource<T>(resource: string) {
     async function loadResource() {
       setState({ data: null, error: null, loading: true })
       try {
-        const response = await fetch(`/api/${resource}`, {
+        const response = await fetch(apiUrl(`/api/${resource}`), {
           signal: controller.signal,
         })
         if (!response.ok) {

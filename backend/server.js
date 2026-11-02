@@ -3,6 +3,7 @@ const path = require("node:path")
 const { createHash, randomBytes, timingSafeEqual } = require("node:crypto")
 const { Readable } = require("node:stream")
 const express = require("express")
+const cors = require("cors")
 const multer = require("multer")
 const { v2: cloudinary } = require("cloudinary")
 const dotenv = require("dotenv")
@@ -237,18 +238,20 @@ function getSessionToken(request) {
 function setSessionCookie(response, request, token) {
   const secure =
     process.env.NODE_ENV === "production" || request.secure ? "; Secure" : ""
+  const sameSite = process.env.NODE_ENV === "production" ? "None" : "Strict"
   response.setHeader(
     "Set-Cookie",
-    `${sessionCookieName}=${encodeURIComponent(token)}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=${sessionLifetimeMs / 1000}${secure}`,
+    `${sessionCookieName}=${encodeURIComponent(token)}; HttpOnly; SameSite=${sameSite}; Path=/api; Max-Age=${sessionLifetimeMs / 1000}${secure}`,
   )
 }
 
 function clearSessionCookie(response, request) {
   const secure =
     process.env.NODE_ENV === "production" || request.secure ? "; Secure" : ""
+  const sameSite = process.env.NODE_ENV === "production" ? "None" : "Strict"
   response.setHeader(
     "Set-Cookie",
-    `${sessionCookieName}=; HttpOnly; SameSite=Strict; Path=/api; Max-Age=0${secure}`,
+    `${sessionCookieName}=; HttpOnly; SameSite=${sameSite}; Path=/api; Max-Age=0${secure}`,
   )
 }
 
@@ -266,12 +269,22 @@ function createApp(
   {
     adminUsername = process.env.ADMIN_USERNAME,
     adminPassword = process.env.ADMIN_PASSWORD,
+    allowedOrigins = (process.env.CORS_ORIGINS || "")
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean),
     now = Date.now,
     cloudinaryUpload,
   } = {},
 ) {
   const app = express()
   app.disable("x-powered-by")
+  app.use(
+    cors({
+      origin: allowedOrigins,
+      credentials: true,
+    }),
+  )
   app.use(express.json({ limit: "1mb" }))
   const sessions = new Map()
   const loginAttempts = new Map()

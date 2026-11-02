@@ -75,6 +75,7 @@ before(async () => {
   server = createApp(store, {
     adminUsername: "test-admin",
     adminPassword: "a-long-test-password",
+    allowedOrigins: ["https://portfolio.example"],
     cloudinaryUpload: async (file) => {
       if (cloudinaryUploadError) throw cloudinaryUploadError
       uploadedImageBytes = file.buffer
@@ -522,17 +523,54 @@ test("work and blog endpoints support CRUD and persist updates", async () => {
   )
 })
 
-test("invalid content, missing IDs, and login throttling are handled", async () => {
-  const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      username: "test-admin",
-      password: "a-long-test-password",
-    }),
+test("CORS allows configured frontend origins with credentials", async () => {
+  const preflight = await fetch(`${baseUrl}/api/auth/login`, {
+    method: "OPTIONS",
+    headers: {
+      origin: "https://portfolio.example",
+      "access-control-request-method": "POST",
+      "access-control-request-headers": "content-type",
+    },
   })
+
+  assert.equal(preflight.status, 204)
+  assert.equal(
+    preflight.headers.get("access-control-allow-origin"),
+    "https://portfolio.example",
+  )
+  assert.equal(
+    preflight.headers.get("access-control-allow-credentials"),
+    "true",
+  )
+
+  const untrustedOrigin = await fetch(`${baseUrl}/api/works`, {
+    headers: { origin: "https://untrusted.example" },
+  })
+  assert.equal(untrustedOrigin.headers.get("access-control-allow-origin"), null)
+})
+
+test("invalid content, missing IDs, and login throttling are handled", async () => {
+  const previousNodeEnv = process.env.NODE_ENV
+  process.env.NODE_ENV = "production"
+  let loginResponse
+  try {
+    loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        username: "test-admin",
+        password: "a-long-test-password",
+      }),
+    })
+  } finally {
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV
+    else process.env.NODE_ENV = previousNodeEnv
+  }
   assert.equal(loginResponse.status, 200)
-  adminCookie = loginResponse.headers.get("set-cookie").split(";", 1)[0]
+  const loginCookie = loginResponse.headers.get("set-cookie")
+  assert.match(loginCookie, /SameSite=None/i)
+  assert.match(loginCookie, /Secure/i)
+  adminCookie = loginCookie.split(";", 1)[0]
 
   const invalidResponse = await adminFetch(`${baseUrl}/api/blog`, {
     method: "POST",

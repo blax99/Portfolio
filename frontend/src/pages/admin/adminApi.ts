@@ -5,6 +5,7 @@ import type {
   Skill,
   WorkProject,
 } from "../../types/content"
+import { apiUrl } from "../../utils/apiUrl"
 
 export type WorkInput = Omit<WorkProject, "id" | "number"> & {
   number?: string
@@ -24,9 +25,9 @@ export async function adminRequest<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const isFormData = options.body instanceof FormData
-  const response = await fetch(path, {
+  const response = await fetch(apiUrl(path), {
     ...options,
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       ...(options.body && !isFormData
         ? { "Content-Type": "application/json" }
