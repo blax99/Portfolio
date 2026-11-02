@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output and tooling caches
+/dist/
+/build/
+/backend/dist/
+.vite/
+.cache/
+*.tsbuildinfo
+vite.config.*.timestamp-*
+
+# Local environment files (keep example templates)
+/.env
+/.env.*
+!/.env.example
+/backend/.env
+/backend/.env.*
+!/backend/.env.example
+/backend/ReadMe.md
+
+# Logs and temporary files
+logs/
+*.log
+*-debug.log*
+.tmp-*
+.claude-replay.*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Platform-managed agent state
+/.plugins/
+/.opencode-skills/
+/AGENTS.md

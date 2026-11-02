@@ -1,0 +1,259 @@
+{
+  "works": [
+    {
+      "id": "campus-connect",
+      "number": "01",
+      "title": "Campus Connects",
+      "image": "/assets/campus-connect.svg",
+      "category": "Full-stack platform",
+      "year": "2025",
+      "featured": true,
+      "summary": "A community hub that helps students discover campus groups, manage events, and connect around shared interests.",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "PostgreSQL"
+      ],
+      "highlights": [
+        "Role-based dashboards for students and organizers",
+        "Real-time event registration and attendance tracking",
+        "Accessible, responsive interface for every device"
+      ]
+    },
+    {
+      "id": "pathfinding-visualizer",
+      "number": "02",
+      "title": "Pathfinding Visualizer",
+      "image": "/assets/pathfinding-visualizer.svg",
+      "category": "Algorithms & visualization",
+      "year": "2024",
+      "featured": true,
+      "summary": "An interactive learning tool that turns graph-search algorithms into clear, step-by-step visual journeys.",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Canvas API",
+        "Vite"
+      ],
+      "highlights": [
+        "Animated BFS, DFS, Dijkstra, and A* algorithms",
+        "Custom grid, obstacle, speed, and weight controls",
+        "Side-by-side performance and route comparisons"
+      ]
+    },
+    {
+      "id": "studysync",
+      "number": "03",
+      "title": "StudySync",
+      "image": "/assets/studysync.svg",
+      "category": "AI-powered learning",
+      "year": "2024",
+      "featured": true,
+      "summary": "A focused study workspace that transforms course notes into structured summaries, quizzes, and revision plans.",
+      "technologies": [
+        "Python",
+        "FastAPI",
+        "React",
+        "OpenAI API"
+      ],
+      "highlights": [
+        "Document processing and semantic note search",
+        "Personalized quizzes with progress insights",
+        "Secure API with streaming AI responses"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "react",
+      "group": "Front-end",
+      "name": "React",
+      "logo": "react",
+      "color": "61DAFB"
+    },
+    {
+      "id": "nextjs",
+      "group": "Front-end",
+      "name": "Next.js",
+      "logo": "nextdotjs",
+      "color": "000000"
+    },
+    {
+      "id": "typescript",
+      "group": "Front-end",
+      "name": "TypeScript",
+      "logo": "typescript",
+      "color": "3178C6"
+    },
+    {
+      "id": "tailwind-css",
+      "group": "Front-end",
+      "name": "Tailwind CSS",
+      "logo": "tailwindcss",
+      "color": "06B6D4"
+    },
+    {
+      "id": "vite",
+      "group": "Front-end",
+      "name": "Vite",
+      "logo": "vite",
+      "color": "646CFF"
+    },
+    {
+      "id": "nodejs",
+      "group": "Back-end",
+      "name": "Node.js",
+      "logo": "nodedotjs",
+      "color": "5FA04E"
+    },
+    {
+      "id": "express",
+      "group": "Back-end",
+      "name": "Express",
+      "logo": "express",
+      "color": "000000"
+    },
+    {
+      "id": "django",
+      "group": "Back-end",
+      "name": "Django",
+      "logo": "django",
+      "color": "092E20"
+    },
+    {
+      "id": "postgresql",
+      "group": "Back-end",
+      "name": "PostgreSQL",
+      "logo": "postgresql",
+      "color": "4169E1"
+    },
+    {
+      "id": "mongodb",
+      "group": "Back-end",
+      "name": "MongoDB",
+      "logo": "mongodb",
+      "color": "47A248"
+    },
+    {
+      "id": "git",
+      "group": "Development tools",
+      "name": "Git",
+      "logo": "git",
+      "color": "F05032"
+    },
+    {
+      "id": "github",
+      "group": "Development tools",
+      "name": "GitHub",
+      "logo": "github",
+      "color": "181717"
+    },
+    {
+      "id": "docker",
+      "group": "Development tools",
+      "name": "Docker",
+      "logo": "docker",
+      "color": "2496ED"
+    },
+    {
+      "id": "postman",
+      "group": "Development tools",
+      "name": "Postman",
+      "logo": "postman",
+      "color": "FF6C37"
+    },
+    {
+      "id": "figma",
+      "group": "Development tools",
+      "name": "Figma",
+      "logo": "figma",
+      "color": "F24E1E"
+    },
+    {
+      "id": "vscode",
+      "group": "Development tools",
+      "name": "VS Code",
+      "imageUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "design-system-from-scratch",
+      "title": "Making a design system from scratch",
+      "date": "12 Feb 2020",
+      "dateTime": "2020-02-12",
+      "category": "Design, Pattern",
+      "readTime": "6 min read",
+      "summary": "A practical look at turning scattered interface decisions into a flexible design system that helps teams create consistent products.",
+      "content": "A design system is more than a component library. It is the shared language between designers and developers that turns scattered interface decisions into a cohesive product.\n\nWhen I started building one from scratch, the first step was an interface inventory. I catalogued every button, input, card, and modal across the product to see where things diverged. The inconsistencies were obvious: three different border radii, four shades of \"primary blue\", and spacing values that had no relationship to one another.\n\nFrom there, I defined a small set of design tokens — color, typography, spacing, and border radius — and built components on top of them. Constraints came first. By limiting the palette and the type scale, every new screen felt like it belonged to the same family.\n\nThe result was a flexible system that helped the team ship consistent products faster, with less back-and-forth between design and engineering."
+    },
+    {
+      "id": "pixel-perfect-icons",
+      "title": "Creating pixel perfect icons in Figma",
+      "date": "8 Feb 2020",
+      "dateTime": "2020-02-08",
+      "category": "Figma, Icon Design",
+      "readTime": "5 min read",
+      "summary": "The grids, optical corrections, and reusable components I use to create icon sets that remain crisp and balanced at every size.",
+      "content": "Pixel-perfect icons come down to three things: a consistent grid, optical corrections, and reusable components.\n\nI start with a 24×24 grid and a 2px corner radius. Keeping every icon on the same pixel grid means they line up perfectly when placed side by side, even at small sizes.\n\nBut alignment on the grid is only half the story. A circle and a square with the same dimensions do not look the same size to the human eye. I apply optical corrections — slightly oversizing round shapes and tapering diagonal strokes — so each icon feels balanced rather than mathematically exact.\n\nFinally, I build the icons as reusable components with nested symbols. That way, updating a stroke width or a shared detail ripples across the entire set instead of requiring a file-by-file hunt."
+    },
+    {
+      "id": "interfaces-that-scale",
+      "title": "Making interfaces that scale",
+      "date": "28 Jan 2020",
+      "dateTime": "2020-01-28",
+      "category": "Design, Development",
+      "readTime": "8 min read",
+      "summary": "How thoughtful constraints, component boundaries, and responsive rules make interfaces easier to maintain as products grow.",
+      "content": "Interfaces that scale are built on constraints, not freedom.\n\nWhen a product is small, almost any structure works. As it grows, the same structure starts to crack under the weight of new features and new team members. That is where component boundaries matter.\n\nI draw boundaries around single responsibilities. A button does one thing. A card does one thing. When components stay small and focused, they compose predictably instead of turning into giant props-controlling-everything monsters.\n\nResponsive rules are the other half. Instead of arbitrary breakpoints, I design around content needs — when does this line length become too long? When does this sidebar stop being useful?\n\nThoughtful constraints make an interface easier to maintain because the next person (or your future self) can guess where things belong."
+    },
+    {
+      "id": "react-typescript-notes",
+      "title": "Notes from building with React and TypeScript",
+      "date": "14 Jan 2020",
+      "dateTime": "2020-01-14",
+      "category": "React, TypeScript",
+      "readTime": "7 min read",
+      "summary": "Lessons learned from designing predictable component APIs, managing state, and keeping a modern front-end codebase approachable.",
+      "content": "Building with React and TypeScript is a study in predictable boundaries.\n\nThe biggest lesson I learned was to design component APIs like public contracts. Props should be explicit, optional props should have sensible defaults, and children should flow naturally. When the API is clear, the component is easy to use and hard to misuse.\n\nState management followed the same principle. I kept state as close to where it is used as possible, lifting it only when multiple siblings needed to stay in sync. Not every piece of data needs a global store.\n\nTypeScript helped catch mistakes early, but its real value was documentation. Types told the next developer what a component expected without them having to read the implementation.\n\nTogether, these habits kept the codebase approachable as it grew — predictable, readable, and easy to change."
+    }
+  ],
+  "about": [
+    {
+      "id": "about-me",
+      "name": "Krishna Chaudhary",
+      "location": "Kathmandu, Nepal",
+      "education": "BSc Computer Science and Inforamtion Technology, Tribhuvan University",
+      "interest": "Web development & building products",
+      "image": "/assets/pf.jpeg",
+      "imageAlt": "Krishna Chaudhary"
+    }
+  ],
+  "thoughts": [
+    {
+      "id": "thought-benjamin-franklin",
+      "text": "Well done is better than well said.",
+      "author": "Benjamin Franklin",
+      "image": "/assets/benjamin-franklin.jpg",
+      "imageAlt": "Portrait of Benjamin Franklin",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:Joseph_Siffrein_Duplessis_-_Benjamin_Franklin_-_Google_Art_Project.jpg"
+    },
+    {
+      "id": "thought-marcus-aurelius",
+      "text": "The happiness of your life depends upon the quality of your thoughts.",
+      "author": "Marcus Aurelius",
+      "image": "/assets/marcus-aurelius.jpg",
+      "imageAlt": "Sculpted portrait of Marcus Aurelius",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:Head_Marcus_Aurelius_archmus_Heraklion.jpg"
+    },
+    {
+      "id": "thought-thomas-edison",
+      "text": "Genius is one percent inspiration and ninety-nine percent perspiration.",
+      "author": "Thomas Edison",
+      "image": "/assets/thomas-edison.jpg",
+      "imageAlt": "Portrait of Thomas Edison",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:Thomas_Edison2.jpg"
+    }
+  ]
+}

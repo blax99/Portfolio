@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Heebo:Black';
+  src: url('https://static.figma.com/font/Heebo_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: 'Heebo:Bold';
+  src: url('https://static.figma.com/font/Heebo_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Heebo:Medium';
+  src: url('https://static.figma.com/font/Heebo_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Heebo:Regular';
+  src: url('https://static.figma.com/font/Heebo_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@theme {
+  --font-heebo-black: 'Heebo:Black', sans-serif;
+  --font-heebo-bold: 'Heebo:Bold', sans-serif;
+  --font-heebo-medium: 'Heebo:Medium', sans-serif;
+  --font-heebo-regular: 'Heebo:Regular', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (orientation: landscape) and (min-width: 640px) {
+  .skills-groups-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .skill-tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .skill-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .skill-item-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    padding: 8px;
+  }
+
+  .skill-item-name {
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+body {
+  margin: 0;
+  min-width: 0;
+  background: #edf7fa;
+}
+
+.dark body {
+  background: #0f172a;
+}
+
+a {
+  text-decoration: none;
+}
+
+.admin-page button:not(:disabled) {
+  cursor: pointer;
+}
+
+.project-details summary {
+  list-style: none;
+}
+
+.project-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-details summary::after {
+  content: '+';
+  display: inline-block;
+  margin-left: 8px;
+  font-family: 'Heebo:Bold', sans-serif;
+}
+
+.project-details[open] summary::after {
+  content: '−';
+}
