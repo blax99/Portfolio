@@ -14,10 +14,10 @@ vite.config.*.timestamp-*
 # Local environment files (keep example templates)
 /frontend/.env
 /frontend/.env.*
-!/frontend/.env.example
+/frontend/.env.example
 /backend/.env
 /backend/.env.*
-!/backend/.env.example
+/backend/.env.example
 /backend/README.md
 
 # Logs and temporary files
