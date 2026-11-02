@@ -621,9 +621,9 @@ if (require.main === module) {
   })
 }
 
-module.exports = {
+module.exports = Object.assign(createApp(), {
   createApp,
   isValidAdminConfiguration,
   startServer,
   validateRecord,
-}
+})

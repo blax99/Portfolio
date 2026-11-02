@@ -3,7 +3,8 @@ const fs = require("node:fs/promises")
 const os = require("node:os")
 const path = require("node:path")
 const { after, before, test } = require("node:test")
-const { createApp } = require("../server")
+const serverApp = require("../server")
+const { createApp } = serverApp
 const { createJsonStore } = require("../store")
 
 const workPayload = {
@@ -57,6 +58,11 @@ let baseUrl
 let adminCookie
 let uploadedImageBytes
 let cloudinaryUploadError = null
+
+test("exports an Express handler for Vercel", () => {
+  assert.equal(typeof serverApp, "function")
+  assert.equal(typeof serverApp.createApp, "function")
+})
 
 async function adminFetch(url, options = {}) {
   const headers = new Headers(options.headers)
