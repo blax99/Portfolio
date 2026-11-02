@@ -17,7 +17,7 @@ vite.config.*.timestamp-*
 /backend/.env
 /backend/.env.*
 !/backend/.env.example
-/backend/ReadMe.md
+/backend/README.md
 
 # Logs and temporary files
 logs/
