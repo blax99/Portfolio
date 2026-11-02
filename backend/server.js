@@ -337,6 +337,10 @@ function createApp(
     next()
   }
 
+  app.get("/", (_request, response) => {
+    response.json({ status: "running" })
+  })
+
   app.get("/api/health", (_request, response) => {
     response.json({ status: "ok" })
   })

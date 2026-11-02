@@ -64,6 +64,12 @@ test("exports an Express handler for Vercel", () => {
   assert.equal(typeof serverApp.createApp, "function")
 })
 
+test("root route reports that the server is running", async () => {
+  const response = await fetch(baseUrl)
+  assert.equal(response.status, 200)
+  assert.deepEqual(await response.json(), { status: "running" })
+})
+
 async function adminFetch(url, options = {}) {
   const headers = new Headers(options.headers)
   if (adminCookie) headers.set("cookie", adminCookie)
