@@ -370,7 +370,7 @@ export default function AdminDashboardPage() {
   return (
     <main className="admin-page min-h-screen bg-[#f5f8fc] dark:bg-[#0f172a]">
       <header className="border-b border-[#e5e5ea] bg-white dark:border-[#334155] dark:bg-[#1f2a44]">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-3 px-4 py-4 sm:gap-4 sm:px-8">
           <div>
             <p className="font-heebo-medium text-[11px] uppercase tracking-[0.18em] text-[#ff6464]">
               Portfolio admin
@@ -397,15 +397,18 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1240px] gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[230px_1fr] lg:py-12">
+      <div className="mx-auto grid max-w-[1240px] gap-6 px-4 py-6 sm:gap-8 sm:px-8 lg:grid-cols-[230px_1fr] lg:py-12">
         <aside>
           <p className="font-heebo-medium mb-3 px-3 text-[11px] uppercase tracking-[0.14em] text-[#8695a4]">
             Manage content
           </p>
-          <nav aria-label="Admin content" className="flex gap-2 lg:flex-col">
+          <nav
+            aria-label="Admin content"
+            className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-col"
+          >
             <button
               aria-current={activeResource === "works" ? "page" : undefined}
-              className={`font-heebo-medium flex flex-1 items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition lg:flex-none ${
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
                 activeResource === "works"
                   ? "bg-[#142850] text-white"
                   : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
@@ -417,14 +420,14 @@ export default function AdminDashboardPage() {
               }}
               type="button"
             >
-              <span>Work projects</span>
+              <span className="min-w-0">Work projects</span>
               <span className="text-[12px] opacity-75">
                 {formatNumber(works.length)}
               </span>
             </button>
             <button
               aria-current={activeResource === "blog" ? "page" : undefined}
-              className={`font-heebo-medium flex flex-1 items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition lg:flex-none ${
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
                 activeResource === "blog"
                   ? "bg-[#142850] text-white"
                   : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
@@ -436,14 +439,14 @@ export default function AdminDashboardPage() {
               }}
               type="button"
             >
-              <span>Blog posts</span>
+              <span className="min-w-0">Blog posts</span>
               <span className="text-[12px] opacity-75">
                 {formatNumber(posts.length)}
               </span>
             </button>
             <button
               aria-current={activeResource === "skills" ? "page" : undefined}
-              className={`font-heebo-medium flex flex-1 items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition lg:flex-none ${
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
                 activeResource === "skills"
                   ? "bg-[#142850] text-white"
                   : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
@@ -455,14 +458,14 @@ export default function AdminDashboardPage() {
               }}
               type="button"
             >
-              <span>Skills</span>
+              <span className="min-w-0">Skills</span>
               <span className="text-[12px] opacity-75">
                 {formatNumber(skills.length)}
               </span>
             </button>
             <button
               aria-current={activeResource === "thoughts" ? "page" : undefined}
-              className={`font-heebo-medium flex flex-1 items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition lg:flex-none ${
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
                 activeResource === "thoughts"
                   ? "bg-[#142850] text-white"
                   : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
@@ -474,14 +477,14 @@ export default function AdminDashboardPage() {
               }}
               type="button"
             >
-              <span>Thought of the day</span>
+              <span className="min-w-0">Thought of the day</span>
               <span className="text-[12px] opacity-75">
                 {formatNumber(thoughts.length)}
               </span>
             </button>
             <button
               aria-current={activeResource === "about" ? "page" : undefined}
-              className={`font-heebo-medium flex flex-1 items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition lg:flex-none ${
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
                 activeResource === "about"
                   ? "bg-[#142850] text-white"
                   : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
@@ -493,7 +496,7 @@ export default function AdminDashboardPage() {
               }}
               type="button"
             >
-              <span>About Me</span>
+              <span className="min-w-0">About Me</span>
               <span className="text-[12px] opacity-75">
                 {formatNumber(aboutProfiles.length)}
               </span>
@@ -518,7 +521,7 @@ export default function AdminDashboardPage() {
                         ? "Daily inspiration"
                         : "Profile"}
               </p>
-              <h2 className="font-heebo-bold mt-1 text-[30px] text-[#21243d] dark:text-[#f8fafc]">
+              <h2 className="font-heebo-bold mt-1 text-2xl text-[#21243d] sm:text-[30px] dark:text-[#f8fafc]">
                 {activeResource === "works"
                   ? "Work projects"
                   : activeResource === "blog"
@@ -578,7 +581,7 @@ export default function AdminDashboardPage() {
           )}
 
           {editor && (
-            <section className="mb-6 rounded-2xl border border-[#e5e5ea] bg-white p-5 shadow-sm sm:p-7 dark:border-[#334155] dark:bg-[#1f2a44]">
+            <section className="mb-6 rounded-2xl border border-[#e5e5ea] bg-white p-4 shadow-sm sm:p-7 dark:border-[#334155] dark:bg-[#1f2a44]">
               <div className="mb-5">
                 <h3 className="font-heebo-bold text-[21px] text-[#21243d] dark:text-[#f8fafc]">
                   {editor.item
@@ -654,7 +657,7 @@ export default function AdminDashboardPage() {
           )}
 
           <div className="overflow-hidden rounded-2xl border border-[#e5e5ea] bg-white shadow-sm dark:border-[#334155] dark:bg-[#1f2a44]">
-            <div className="flex items-center justify-between border-b border-[#e5e5ea] px-5 py-4 dark:border-[#334155]">
+            <div className="flex items-center justify-between border-b border-[#e5e5ea] px-4 py-4 sm:px-5 dark:border-[#334155]">
               <p className="font-heebo-medium text-[14px] text-[#475569] dark:text-[#cbd5e1]">
                 {activeItems.length}{" "}
                 {activeResource === "works"
@@ -690,7 +693,7 @@ export default function AdminDashboardPage() {
                 {activeResource === "works"
                   ? works.map((work) => (
                       <li
-                        className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center"
+                        className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                         key={work.id}
                       >
                         <img
@@ -736,7 +739,7 @@ export default function AdminDashboardPage() {
                   : activeResource === "blog"
                     ? posts.map((post) => (
                         <li
-                          className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center"
+                          className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                           key={post.id}
                         >
                           <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg bg-[#f0edff] text-[24px] text-[#7563df] dark:bg-[#302b50]">
@@ -775,7 +778,7 @@ export default function AdminDashboardPage() {
                     : activeResource === "skills"
                       ? skills.map((skill) => (
                           <li
-                            className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center"
+                            className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                             key={skill.id}
                           >
                             <div className="flex h-16 w-16 shrink-0 items-center justify-center border border-[#dbe7eb] bg-[#faf8f2] p-3 dark:border-[#b8a98f] dark:bg-[#eee3cf]">
@@ -826,7 +829,7 @@ export default function AdminDashboardPage() {
                       : activeResource === "thoughts"
                         ? thoughts.map((thought) => (
                             <li
-                              className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center"
+                              className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                               key={thought.id}
                             >
                               {thought.image ? (
@@ -879,7 +882,7 @@ export default function AdminDashboardPage() {
                           ))
                         : aboutProfiles.map((profile) => (
                             <li
-                              className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center"
+                              className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                               key={profile.id}
                             >
                               <img
@@ -912,12 +915,12 @@ export default function AdminDashboardPage() {
         </section>
       </div>
       {deleteConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/60 px-5 py-8">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0f172a]/60 px-4 py-4 sm:items-center sm:px-5 sm:py-8">
           <section
             aria-describedby="delete-confirmation-description"
             aria-labelledby="delete-confirmation-title"
             aria-modal="true"
-            className="w-full max-w-[440px] rounded-2xl border border-[#e5e5ea] bg-white p-6 shadow-xl dark:border-[#334155] dark:bg-[#1f2a44]"
+            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-[440px] overflow-y-auto rounded-2xl border border-[#e5e5ea] bg-white p-5 shadow-xl sm:p-6 dark:border-[#334155] dark:bg-[#1f2a44]"
             role="alertdialog"
           >
             <h2
@@ -931,7 +934,7 @@ export default function AdminDashboardPage() {
               id="delete-confirmation-description"
             >
               Delete{" "}
-              <span className="font-heebo-bold">
+              <span className="font-heebo-bold break-words">
                 {deleteConfirmation.title}
               </span>
               ? This action cannot be undone. Type <strong>DELETE</strong> to

@@ -53,8 +53,8 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="admin-page flex min-h-screen items-center justify-center bg-[#edf7fa] px-5 py-12 dark:bg-[#0f172a]">
-      <section className="w-full max-w-[440px] rounded-2xl border border-[#e5e5ea] bg-white p-7 shadow-[0_24px_70px_rgba(33,36,61,0.10)] sm:p-10 dark:border-[#334155] dark:bg-[#1f2a44]">
+    <main className="admin-page flex min-h-screen items-center justify-center bg-[#edf7fa] px-4 py-8 sm:px-5 sm:py-12 dark:bg-[#0f172a]">
+      <section className="w-full max-w-[440px] rounded-2xl border border-[#e5e5ea] bg-white p-6 shadow-[0_24px_70px_rgba(33,36,61,0.10)] sm:p-10 dark:border-[#334155] dark:bg-[#1f2a44]">
         <Link
           className="font-heebo-medium text-[14px] text-[#00a8cc] hover:underline"
           to="/"
@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
           <p className="font-heebo-medium text-[12px] uppercase tracking-[0.18em] text-[#ff6464]">
             Portfolio admin
           </p>
-          <h1 className="font-heebo-bold mt-2 text-[34px] leading-tight text-[#21243d] dark:text-[#f8fafc]">
+          <h1 className="font-heebo-bold mt-2 text-3xl leading-tight text-[#21243d] sm:text-[34px] dark:text-[#f8fafc]">
             Welcome back
           </h1>
           <p className="font-heebo-regular mt-3 text-[15px] leading-relaxed text-[#64748b] dark:text-[#cbd5e1]">
