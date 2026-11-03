@@ -561,6 +561,135 @@ test("CORS allows configured frontend origins with credentials", async () => {
   assert.equal(untrustedOrigin.headers.get("access-control-allow-origin"), null)
 })
 
+test("admin sessions are shared across app instances", async () => {
+  const sessions = new Map()
+  const sessionStore = {
+    async createSession(token, expiresAt) {
+      sessions.set(token, { expiresAt })
+    },
+    async getSession(token) {
+      return sessions.get(token)
+    },
+    async deleteSession(token) {
+      sessions.delete(token)
+    },
+  }
+  const appOptions = {
+    adminUsername: "test-admin",
+    adminPassword: "a-long-test-password",
+    allowedOrigins: ["https://portfolio.example"],
+    sessionStore,
+    cloudinaryUpload: async () => ({
+      secure_url: "https://res.cloudinary.com/test-cloud/project.png",
+    }),
+  }
+  const firstServer = createApp(undefined, appOptions).listen(0, "127.0.0.1")
+  const secondServer = createApp(undefined, appOptions).listen(0, "127.0.0.1")
+
+  try {
+    await Promise.all(
+      [firstServer, secondServer].map(
+        (instance) =>
+          new Promise((resolve, reject) => {
+            instance.once("listening", resolve)
+            instance.once("error", reject)
+          }),
+      ),
+    )
+    const firstUrl = `http://127.0.0.1:${firstServer.address().port}`
+    const secondUrl = `http://127.0.0.1:${secondServer.address().port}`
+    const loginResponse = await fetch(`${firstUrl}/api/auth/login`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        username: "test-admin",
+        password: "a-long-test-password",
+      }),
+    })
+    assert.equal(loginResponse.status, 200)
+    const cookie = loginResponse.headers.get("set-cookie").split(";", 1)[0]
+    assert.equal(
+      (
+        await fetch(`${secondUrl}/api/auth/me`, {
+          headers: { cookie },
+        })
+      ).status,
+      200,
+    )
+
+    const uploadForm = new FormData()
+    uploadForm.append(
+      "image",
+      new Blob(["image data"], { type: "image/png" }),
+      "project.png",
+    )
+    const uploadResponse = await fetch(`${secondUrl}/api/uploads`, {
+      method: "POST",
+      headers: { cookie },
+      body: uploadForm,
+    })
+    assert.equal(uploadResponse.status, 201)
+
+    await fetch(`${secondUrl}/api/auth/logout`, {
+      method: "POST",
+      headers: { cookie },
+    })
+    assert.equal(
+      (
+        await fetch(`${firstUrl}/api/auth/me`, {
+          headers: { cookie },
+        })
+      ).status,
+      401,
+    )
+  } finally {
+    await Promise.all(
+      [firstServer, secondServer].map(
+        (instance) =>
+          new Promise((resolve, reject) => {
+            instance.close((error) => (error ? reject(error) : resolve()))
+          }),
+      ),
+    )
+  }
+})
+
+test("Vercel login requires persistent session storage", async () => {
+  const previousVercel = process.env.VERCEL
+  process.env.VERCEL = "1"
+  const instance = createApp(undefined, {
+    adminUsername: "test-admin",
+    adminPassword: "a-long-test-password",
+    sessionStore: {},
+  }).listen(0, "127.0.0.1")
+
+  try {
+    await new Promise((resolve, reject) => {
+      instance.once("listening", resolve)
+      instance.once("error", reject)
+    })
+    const response = await fetch(
+      `http://127.0.0.1:${instance.address().port}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          username: "test-admin",
+          password: "a-long-test-password",
+        }),
+      },
+    )
+    assert.equal(response.status, 503)
+    assert.match((await response.json()).error, /MONGODB_URI/)
+  } finally {
+    await new Promise((resolve, reject) => {
+      instance.close((error) => (error ? reject(error) : resolve()))
+    })
+    if (previousVercel === undefined) delete process.env.VERCEL
+    else process.env.VERCEL = previousVercel
+  }
+})
+
 test("invalid content, missing IDs, and login throttling are handled", async () => {
   const previousNodeEnv = process.env.NODE_ENV
   process.env.NODE_ENV = "production"

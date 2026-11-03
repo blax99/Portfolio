@@ -1,4 +1,4 @@
-const { randomUUID } = require("node:crypto")
+const { createHash, randomUUID } = require("node:crypto")
 const fs = require("node:fs/promises")
 const path = require("node:path")
 const mongoose = require("mongoose")
@@ -7,6 +7,7 @@ const BlogPost = require("./models/BlogPost")
 const Skill = require("./models/Skill")
 const DailyThought = require("./models/DailyThought")
 const AboutProfile = require("./models/AboutProfile")
+const AdminSession = require("./models/AdminSession")
 
 const MODELS = {
   works: Work,
@@ -123,6 +124,31 @@ function createMongoStore(mongoUri) {
     return result.deletedCount > 0
   }
 
+  async function createSession(token, expiresAt) {
+    await initialize()
+    await AdminSession.create({
+      tokenHash: createHash("sha256").update(token).digest("hex"),
+      expiresAt: new Date(expiresAt),
+    })
+  }
+
+  async function getSession(token) {
+    await initialize()
+    const tokenHash = createHash("sha256").update(token).digest("hex")
+    return AdminSession.findOne({
+      tokenHash,
+      expiresAt: { $gt: new Date() },
+    })
+      .select("expiresAt")
+      .lean()
+  }
+
+  async function deleteSession(token) {
+    await initialize()
+    const tokenHash = createHash("sha256").update(token).digest("hex")
+    await AdminSession.deleteOne({ tokenHash })
+  }
+
   return {
     initialize,
     list,
@@ -130,6 +156,9 @@ function createMongoStore(mongoUri) {
     create,
     update,
     delete: removeRecord,
+    createSession,
+    getSession,
+    deleteSession,
   }
 }
 

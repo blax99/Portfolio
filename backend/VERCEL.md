@@ -15,7 +15,9 @@ CORS_ORIGINS=https://your-frontend.vercel.app
 Set `CORS_ORIGINS` to the exact frontend origin, including the scheme and
 hostname but no trailing slash. Add more production origins as a comma-separated
 list. Do not use `*`: admin API requests use credentialed cookies. The backend
-function serves the API at `/api/*`.
+function serves the API at `/api/*`. `MONGODB_URI` is required in production:
+admin sessions are stored in MongoDB so login remains valid across Vercel
+function instances.
 
 ## Frontend project
 

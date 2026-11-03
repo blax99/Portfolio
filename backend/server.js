@@ -273,6 +273,7 @@ function createApp(
       .split(",")
       .map((origin) => origin.trim())
       .filter(Boolean),
+    sessionStore = contentStore,
     now = Date.now,
     cloudinaryUpload,
   } = {},
@@ -287,6 +288,11 @@ function createApp(
   )
   app.use(express.json({ limit: "1mb" }))
   const sessions = new Map()
+  const hasPersistentSessions = [
+    "createSession",
+    "getSession",
+    "deleteSession",
+  ].every((method) => typeof sessionStore[method] === "function")
   const loginAttempts = new Map()
   const createImageUpload = (maxFileSize) =>
     multer({
@@ -327,11 +333,18 @@ function createApp(
     return attempt
   }
 
-  function requireAdmin(request, _response, next) {
+  async function requireAdmin(request, _response, next) {
     const token = getSessionToken(request)
-    const session = token && sessions.get(token)
+    const session =
+      token &&
+      (hasPersistentSessions
+        ? await sessionStore.getSession(token)
+        : sessions.get(token))
     if (!session || session.expiresAt <= now()) {
-      if (token) sessions.delete(token)
+      if (token) {
+        if (hasPersistentSessions) await sessionStore.deleteSession(token)
+        else sessions.delete(token)
+      }
       return next(new RequestError(401, "Admin login required."))
     }
     next()
@@ -406,10 +419,19 @@ function createApp(
     uploadImageHandler("portfolio/about"),
   )
 
-  app.post("/api/auth/login", (request, response, next) => {
+  app.post("/api/auth/login", async (request, response, next) => {
     if (!credentialsConfigured) {
       return next(
         new RequestError(503, "Admin authentication is not configured."),
+      )
+    }
+    if (process.env.VERCEL && !hasPersistentSessions) {
+      return next(
+        new RequestError(
+          503,
+          "Admin sessions require MongoDB. Configure MONGODB_URI in the Vercel backend project.",
+          { expose: true },
+        ),
       )
     }
 
@@ -439,11 +461,18 @@ function createApp(
 
     loginAttempts.delete(address)
     const currentTime = now()
-    for (const [token, session] of sessions) {
-      if (session.expiresAt <= currentTime) sessions.delete(token)
+    if (!hasPersistentSessions) {
+      for (const [token, session] of sessions) {
+        if (session.expiresAt <= currentTime) sessions.delete(token)
+      }
     }
     const token = randomBytes(32).toString("base64url")
-    sessions.set(token, { expiresAt: currentTime + sessionLifetimeMs })
+    const expiresAt = currentTime + sessionLifetimeMs
+    if (hasPersistentSessions) {
+      await sessionStore.createSession(token, expiresAt)
+    } else {
+      sessions.set(token, { expiresAt })
+    }
     setSessionCookie(response, request, token)
     response.json({ authenticated: true })
   })
@@ -452,9 +481,12 @@ function createApp(
     response.json({ authenticated: true })
   })
 
-  app.post("/api/auth/logout", (request, response) => {
+  app.post("/api/auth/logout", async (request, response) => {
     const token = getSessionToken(request)
-    if (token) sessions.delete(token)
+    if (token) {
+      if (hasPersistentSessions) await sessionStore.deleteSession(token)
+      else sessions.delete(token)
+    }
     clearSessionCookie(response, request)
     response.json({ authenticated: false })
   })
