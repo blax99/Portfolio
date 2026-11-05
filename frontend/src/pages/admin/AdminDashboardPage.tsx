@@ -788,7 +788,6 @@ export default function AdminDashboardPage() {
                         <option value="day">Today</option>
                         <option value="week">This week</option>
                         <option value="month">This month</option>
-                        <option value="year">This year</option>
                         <option value="total">All time</option>
                       </select>
                     </label>
