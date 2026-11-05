@@ -81,6 +81,7 @@ export default function AdminDashboardPage() {
   const [checkingSession, setCheckingSession] = useState(true)
   const [activeResource, setActiveResource] =
     useState<DashboardSection>("works")
+  const [currentPage, setCurrentPage] = useState(1)
   const [works, setWorks] = useState<WorkProject[]>([])
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [skills, setSkills] = useState<Skill[]>([])
@@ -174,6 +175,10 @@ export default function AdminDashboardPage() {
       void loadVisitorStats()
     }
   }, [activeResource, authenticated, loadVisitorStats])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeResource])
 
   async function saveWork(input: WorkInput) {
     setSaving(true)
@@ -403,6 +408,13 @@ export default function AdminDashboardPage() {
             : activeResource === "about"
               ? aboutProfiles
               : []
+  const pageSize = 5
+  const totalPages = Math.max(1, Math.ceil(activeItems.length / pageSize))
+  const displayedPage = Math.min(currentPage, totalPages)
+  const pageStart = (displayedPage - 1) * pageSize
+  const paginatedResources = ["works", "blog", "skills", "thoughts"]
+  const hasPagination =
+    paginatedResources.includes(activeResource) && totalPages > 1
 
   return (
     <main className="admin-page min-h-screen bg-[#f5f8fc] dark:bg-[#0f172a]">
@@ -823,7 +835,7 @@ export default function AdminDashboardPage() {
             ) : (
               <ul className="divide-y divide-[#e5e5ea] dark:divide-[#334155]">
                 {activeResource === "works"
-                  ? works.map((work) => (
+                  ? works.slice(pageStart, pageStart + pageSize).map((work) => (
                       <li
                         className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                         key={work.id}
@@ -869,7 +881,7 @@ export default function AdminDashboardPage() {
                       </li>
                     ))
                   : activeResource === "blog"
-                    ? posts.map((post) => (
+                    ? posts.slice(pageStart, pageStart + pageSize).map((post) => (
                         <li
                           className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                           key={post.id}
@@ -908,7 +920,7 @@ export default function AdminDashboardPage() {
                         </li>
                       ))
                     : activeResource === "skills"
-                      ? skills.map((skill) => (
+                      ? skills.slice(pageStart, pageStart + pageSize).map((skill) => (
                           <li
                             className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                             key={skill.id}
@@ -959,7 +971,7 @@ export default function AdminDashboardPage() {
                           </li>
                         ))
                       : activeResource === "thoughts"
-                        ? thoughts.map((thought) => (
+                        ? thoughts.slice(pageStart, pageStart + pageSize).map((thought) => (
                             <li
                               className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
                               key={thought.id}
@@ -1042,6 +1054,48 @@ export default function AdminDashboardPage() {
                             </li>
                           ))}
               </ul>
+            )}
+            {hasPagination && (
+              <nav
+                aria-label={`${activeResource} pagination`}
+                className="flex items-center justify-between gap-3 border-t border-[#e5e5ea] px-4 py-3 sm:px-5 dark:border-[#334155]"
+              >
+                <p className="font-heebo-regular text-[13px] text-[#64748b] dark:text-[#94a3b8]">
+                  Showing {pageStart + 1}–
+                  {Math.min(pageStart + pageSize, activeItems.length)} of{" "}
+                  {activeItems.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="font-heebo-medium rounded-lg border border-[#d8dee8] px-3 py-2 text-[13px] text-[#475569] transition hover:border-[#00a8cc] hover:text-[#0087a4] disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#475569] dark:text-[#e2e8f0]"
+                    disabled={displayedPage === 1}
+                    onClick={() =>
+                      setCurrentPage((page) => Math.max(1, page - 1))
+                    }
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <span
+                    aria-current="page"
+                    className="font-heebo-medium min-w-12 text-center text-[13px] text-[#475569] dark:text-[#cbd5e1]"
+                  >
+                    {displayedPage} / {totalPages}
+                  </span>
+                  <button
+                    className="font-heebo-medium rounded-lg border border-[#d8dee8] px-3 py-2 text-[13px] text-[#475569] transition hover:border-[#00a8cc] hover:text-[#0087a4] disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#475569] dark:text-[#e2e8f0]"
+                    disabled={displayedPage === totalPages}
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.min(totalPages, page + 1),
+                      )
+                    }
+                    type="button"
+                  >
+                    Next
+                  </button>
+                </div>
+              </nav>
             )}
               </>
             )}
