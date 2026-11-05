@@ -7,40 +7,53 @@ import type { AboutProfile, WorkProject } from "../types/content"
 
 function Hero() {
   return (
-    <section className="mx-auto flex w-full max-w-[856px] flex-col-reverse items-center justify-between gap-8 px-5 pb-14 pt-10 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-16 md:flex-row md:items-start md:pb-[87px] md:pt-[110px] lg:px-0 lg:pt-[140px]">
-      <div className="flex max-w-[506px] flex-col items-center text-center md:items-start md:text-left">
-        <p className="font-heebo-bold mb-3 text-[13px] tracking-[0.18em] text-[#00a8cc] uppercase dark:text-[#67e8f9]">
-          Hi, I'm
-        </p>
-        <h1 className="font-heebo-bold text-[38px] leading-[1.05] tracking-[-0.045em] text-[#21243d] sm:text-[42px] md:text-[56px] md:leading-[1.08] dark:text-[#f8fafc]">
-          Krrish
-          <span className="block text-[#00a8cc] dark:text-[#67e8f9]">
-            Web developer.
-          </span>
-        </h1>
-        <p className="font-heebo-regular mt-6 max-w-[497px] text-justify text-[16px] leading-normal text-[#21243d] md:mt-8 dark:text-[#cbd5e1]">
-          {description}
-        </p>
-        <a
-          className="font-heebo-bold mt-[27px] border-2 border-[#21243d] bg-[#ff6464] px-[18px] py-[10px] text-[16px] tracking-wide text-white transition-colors hover:bg-[#e95454] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6464] md:mt-[39px] dark:border-[#94a3b8]"
-          download="Krrish-Resume.pdf"
-          href="/assets/resume.pdf"
-        >
-          Download Resume
-        </a>
+    <section className="home-hero relative isolate w-full overflow-hidden">
+      <div aria-hidden="true" className="home-hero-sky">
+        <div className="home-hero-cloud home-hero-cloud-one" />
+        <div className="home-hero-cloud home-hero-cloud-two" />
+        <div className="home-hero-cloud home-hero-cloud-three" />
+        <div className="home-hero-cloud home-hero-cloud-four" />
+        <div className="home-hero-stars">
+          {Array.from({ length: 12 }, (_, index) => (
+            <span className="home-hero-star" key={index} />
+          ))}
+        </div>
       </div>
+      <div className="relative mx-auto flex w-full max-w-[856px] flex-col-reverse items-center justify-between gap-8 px-5 pb-14 pt-10 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-16 md:flex-row md:items-start md:pb-[87px] md:pt-[110px] lg:px-0 lg:pt-[140px]">
+        <div className="flex max-w-[506px] flex-col items-center text-center md:items-start md:text-left">
+          <p className="font-heebo-bold mb-3 text-[13px] tracking-[0.18em] text-[#00a8cc] uppercase dark:text-[#67e8f9]">
+            Hi, I'm
+          </p>
+          <h1 className="font-heebo-bold text-[38px] leading-[1.05] tracking-[-0.045em] text-[#21243d] sm:text-[42px] md:text-[56px] md:leading-[1.08] dark:text-[#f8fafc]">
+            Krrish
+            <span className="block text-[#00a8cc] dark:text-[#67e8f9]">
+              Web developer.
+            </span>
+          </h1>
+          <p className="font-heebo-regular mt-6 max-w-[497px] text-justify text-[16px] leading-normal text-[#21243d] md:mt-8 dark:text-[#cbd5e1]">
+            {description}
+          </p>
+          <a
+            className="font-heebo-bold mt-[27px] border-2 border-[#21243d] bg-[#ff6464] px-[18px] py-[10px] text-[16px] tracking-wide text-white transition-colors hover:bg-[#e95454] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6464] md:mt-[39px] dark:border-[#94a3b8]"
+            download="Krrish-Resume.pdf"
+            href="/assets/resume.pdf"
+          >
+            Download Resume
+          </a>
+        </div>
 
-      <div
-        className="relative h-[224px] w-[216px] shrink-0 sm:h-[256px] sm:w-[248px]"
-        aria-hidden="true"
-      >
-        <img
-          alt=""
-          className="absolute right-0 top-0 h-[208px] w-[208px] rounded-full border-4 border-green-500 object-cover sm:h-[243px] sm:w-[243px]"
-          height="243"
-          src={assets.portrait}
-          width="243"
-        />
+        <div
+          className="relative h-[224px] w-[216px] shrink-0 sm:h-[256px] sm:w-[248px]"
+          aria-hidden="true"
+        >
+          <img
+            alt=""
+            className="absolute right-0 top-0 h-[208px] w-[208px] rounded-full border-4 border-green-500 object-cover sm:h-[243px] sm:w-[243px]"
+            height="243"
+            src={assets.portrait}
+            width="243"
+          />
+        </div>
       </div>
     </section>
   )
