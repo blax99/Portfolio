@@ -57,6 +57,15 @@ interface DeleteConfirmation {
 }
 
 type EditorState = WorkEditorState | BlogEditorState | SkillEditorState | ThoughtEditorState | AboutEditorState | null
+type DashboardSection = AdminResource | "visitors"
+
+interface VisitorStats {
+  total: number
+  year: number
+  month: number
+  week: number
+  day: number
+}
 
 function formatNumber(number: number) {
   return String(number).padStart(2, "0")
@@ -70,13 +79,18 @@ export default function AdminDashboardPage() {
   const navigate = useNavigate()
   const [authenticated, setAuthenticated] = useState(false)
   const [checkingSession, setCheckingSession] = useState(true)
-  const [activeResource, setActiveResource] = useState<AdminResource>("works")
+  const [activeResource, setActiveResource] =
+    useState<DashboardSection>("works")
   const [works, setWorks] = useState<WorkProject[]>([])
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [skills, setSkills] = useState<Skill[]>([])
   const [thoughts, setThoughts] = useState<DailyThought[]>([])
   const [aboutProfiles, setAboutProfiles] = useState<AboutProfile[]>([])
+  const [visitorStats, setVisitorStats] = useState<VisitorStats | null>(null)
+  const [visitorPeriod, setVisitorPeriod] =
+    useState<keyof VisitorStats>("day")
   const [loadingContent, setLoadingContent] = useState(false)
+  const [loadingVisitors, setLoadingVisitors] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [editor, setEditor] = useState<EditorState>(null)
@@ -139,6 +153,27 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (authenticated) void loadContent()
   }, [authenticated, loadContent])
+
+  const loadVisitorStats = useCallback(async () => {
+    setError("")
+    setLoadingVisitors(true)
+    try {
+      setVisitorStats(await adminRequest<VisitorStats>("/api/admin/visitors"))
+    } catch (loadError) {
+      setError(getErrorMessage(loadError))
+      if (isSessionExpired(loadError)) {
+        navigate("/admin/login", { replace: true })
+      }
+    } finally {
+      setLoadingVisitors(false)
+    }
+  }, [navigate])
+
+  useEffect(() => {
+    if (authenticated && activeResource === "visitors") {
+      void loadVisitorStats()
+    }
+  }, [activeResource, authenticated, loadVisitorStats])
 
   async function saveWork(input: WorkInput) {
     setSaving(true)
@@ -365,7 +400,9 @@ export default function AdminDashboardPage() {
           ? skills
           : activeResource === "thoughts"
             ? thoughts
-            : aboutProfiles
+            : activeResource === "about"
+              ? aboutProfiles
+              : []
 
   return (
     <main className="admin-page min-h-screen bg-[#f5f8fc] dark:bg-[#0f172a]">
@@ -403,9 +440,28 @@ export default function AdminDashboardPage() {
             Manage content
           </p>
           <nav
-            aria-label="Admin content"
+            aria-label="Admin dashboard"
             className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-col"
           >
+            <button
+              aria-current={activeResource === "visitors" ? "page" : undefined}
+              className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
+                activeResource === "visitors"
+                  ? "bg-[#142850] text-white"
+                  : "bg-white text-[#475569] hover:bg-[#edf7fa] dark:bg-[#1f2a44] dark:text-[#cbd5e1] dark:hover:bg-[#263552]"
+              }`}
+              onClick={() => {
+                setEditor(null)
+                setActiveResource("visitors")
+                setError("")
+              }}
+              type="button"
+            >
+              <span className="min-w-0">Visitors</span>
+              <span className="text-[12px] opacity-75">
+                {formatNumber(visitorStats?.total ?? 0)}
+              </span>
+            </button>
             <button
               aria-current={activeResource === "works" ? "page" : undefined}
               className={`font-heebo-medium flex min-w-0 items-center justify-between rounded-xl px-3 py-3 text-left text-[14px] transition sm:px-4 lg:flex-none ${
@@ -511,7 +567,9 @@ export default function AdminDashboardPage() {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="font-heebo-medium text-[11px] uppercase tracking-[0.16em] text-[#ff6464]">
-                {activeResource === "works"
+                {activeResource === "visitors"
+                  ? "Portfolio analytics"
+                  : activeResource === "works"
                   ? "Portfolio"
                   : activeResource === "blog"
                     ? "Writing"
@@ -522,7 +580,9 @@ export default function AdminDashboardPage() {
                         : "Profile"}
               </p>
               <h2 className="font-heebo-bold mt-1 text-2xl text-[#21243d] sm:text-[30px] dark:text-[#f8fafc]">
-                {activeResource === "works"
+                {activeResource === "visitors"
+                  ? "Visitors"
+                  : activeResource === "works"
                   ? "Work projects"
                   : activeResource === "blog"
                     ? "Blog posts"
@@ -533,7 +593,7 @@ export default function AdminDashboardPage() {
                         : "About Me"}
               </h2>
             </div>
-            {activeResource !== "about" && (
+            {activeResource !== "about" && activeResource !== "visitors" && (
               <button
                 className="font-heebo-bold rounded-lg bg-[#ff6464] px-4 py-2.5 text-[14px] text-white transition hover:bg-[#e95454]"
                 onClick={() => {
@@ -657,6 +717,78 @@ export default function AdminDashboardPage() {
           )}
 
           <div className="overflow-hidden rounded-2xl border border-[#e5e5ea] bg-white shadow-sm dark:border-[#334155] dark:bg-[#1f2a44]">
+            {activeResource === "visitors" ? (
+              <div className="p-4 sm:p-6">
+                <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h3 className="font-heebo-bold text-[18px] text-[#21243d] dark:text-[#f8fafc]">
+                      Visit overview
+                    </h3>
+                    <p className="font-heebo-regular mt-1 max-w-[560px] text-[13px] leading-relaxed text-[#8695a4] dark:text-[#94a3b8]">
+                      Anonymous browser sessions, counted once per tab and
+                      grouped by the Asia/Kathmandu calendar.
+                    </p>
+                  </div>
+                  <button
+                    className="font-heebo-medium text-[13px] text-[#00a8cc] hover:underline disabled:opacity-50"
+                    disabled={loadingVisitors}
+                    onClick={() => void loadVisitorStats()}
+                    type="button"
+                  >
+                    {loadingVisitors ? "Refreshing…" : "Refresh"}
+                  </button>
+                </div>
+                {loadingVisitors && !visitorStats ? (
+                  <p className="font-heebo-regular py-12 text-center text-[14px] text-[#8695a4] dark:text-[#94a3b8]">
+                    Loading visitor statistics…
+                  </p>
+                ) : visitorStats ? (
+                  <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(180px,260px)] sm:items-end">
+                    <article className="rounded-xl border border-[#e5e5ea] bg-[#f8fafc] p-4 dark:border-[#334155] dark:bg-[#16213b]">
+                      <p className="font-heebo-medium text-[12px] text-[#64748b] dark:text-[#94a3b8]">
+                        {
+                          {
+                            total: "All-time visits",
+                            year: "This year",
+                            month: "This month",
+                            week: "This week",
+                            day: "Today",
+                          }[visitorPeriod]
+                        }
+                      </p>
+                      <p className="font-heebo-bold mt-2 text-[30px] leading-none text-[#21243d] dark:text-[#f8fafc]">
+                        {visitorStats[visitorPeriod].toLocaleString()}
+                      </p>
+                    </article>
+                    <label className="grid gap-2">
+                      <span className="font-heebo-medium text-[12px] text-[#64748b] dark:text-[#94a3b8]">
+                        Time period
+                      </span>
+                      <select
+                        className="font-heebo-regular h-11 w-full rounded-lg border border-[#d8dee8] bg-white px-3 text-[14px] text-[#21243d] outline-none transition focus:border-[#00a8cc] focus:ring-2 focus:ring-[#00a8cc]/20 dark:border-[#475569] dark:bg-[#16213b] dark:text-[#f8fafc]"
+                        onChange={(event) =>
+                          setVisitorPeriod(
+                            event.target.value as keyof VisitorStats,
+                          )
+                        }
+                        value={visitorPeriod}
+                      >
+                        <option value="day">Today</option>
+                        <option value="week">This week</option>
+                        <option value="month">This month</option>
+                        <option value="year">This year</option>
+                        <option value="total">All time</option>
+                      </select>
+                    </label>
+                  </div>
+                ) : (
+                  <p className="font-heebo-regular py-12 text-center text-[14px] text-[#8695a4] dark:text-[#94a3b8]">
+                    Visitor statistics are not available.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <>
             <div className="flex items-center justify-between border-b border-[#e5e5ea] px-4 py-4 sm:px-5 dark:border-[#334155]">
               <p className="font-heebo-medium text-[14px] text-[#475569] dark:text-[#cbd5e1]">
                 {activeItems.length}{" "}
@@ -910,6 +1042,8 @@ export default function AdminDashboardPage() {
                             </li>
                           ))}
               </ul>
+            )}
+              </>
             )}
           </div>
         </section>

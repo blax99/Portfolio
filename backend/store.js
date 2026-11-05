@@ -1,6 +1,7 @@
 const fs = require("node:fs/promises")
 const path = require("node:path")
 const { randomUUID } = require("node:crypto")
+const { countVisitorPeriods } = require("./visitorAnalytics")
 
 function clone(value) {
   return structuredClone(value)
@@ -24,6 +25,7 @@ function createJsonStore(filePath) {
         skills: Array.isArray(parsed.skills) ? parsed.skills : [],
         about: Array.isArray(parsed.about) ? parsed.about : [],
         thoughts: Array.isArray(parsed.thoughts) ? parsed.thoughts : [],
+        visitors: Array.isArray(parsed.visitors) ? parsed.visitors : [],
       }
     } catch (error) {
       if (error.code !== "ENOENT") throw error
@@ -115,6 +117,29 @@ function createJsonStore(filePath) {
         if (index === -1) return false
         content[collection].splice(index, 1)
         return true
+      })
+    },
+    recordVisitor(sessionHash, visitedAt) {
+      return mutate(() => {
+        if (
+          content.visitors.some(
+            (visitor) => visitor.sessionHash === sessionHash,
+          )
+        ) {
+          return false
+        }
+        content.visitors.push({ sessionHash, visitedAt })
+        return true
+      })
+    },
+    getVisitorStats(now = new Date()) {
+      return read(() => {
+        return countVisitorPeriods(
+          content.visitors.map((visitor) => ({
+            visitedAt: new Date(visitor.visitedAt),
+          })),
+          now,
+        )
       })
     },
   }

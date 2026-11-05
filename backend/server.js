@@ -481,6 +481,27 @@ function createApp(
     response.json({ authenticated: true })
   })
 
+  app.post("/api/visitors", async (request, response) => {
+    const { sessionId } = request.body ?? {}
+    if (
+      typeof sessionId !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        sessionId,
+      )
+    ) {
+      throw new RequestError(400, "A valid visitor session ID is required.")
+    }
+
+    const sessionHash = createHash("sha256").update(sessionId).digest("hex")
+    await contentStore.recordVisitor(sessionHash, new Date(now()))
+    response.status(204).end()
+  })
+
+  app.get("/api/admin/visitors", requireAdmin, async (_request, response) => {
+    response.setHeader("Cache-Control", "no-store")
+    response.json(await contentStore.getVisitorStats(new Date(now())))
+  })
+
   app.post("/api/auth/logout", async (request, response) => {
     const token = getSessionToken(request)
     if (token) {

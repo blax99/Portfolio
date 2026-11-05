@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import OfflinePage from "./components/OfflinePage"
 import BlogPage from "./pages/BlogPage"
@@ -9,12 +9,65 @@ import SkillsPage from "./pages/SkillsPage"
 import WorkPage from "./pages/WorkPage"
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage"
 import AdminLoginPage from "./pages/admin/AdminLoginPage"
+import { apiUrl } from "./utils/apiUrl"
 
 function ScrollToTop() {
   const { pathname } = useLocation()
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
+  }, [pathname])
+
+  return null
+}
+
+function PortfolioVisitTracker() {
+  const { pathname } = useLocation()
+  const fallbackSessionId = useRef<string>(window.crypto.randomUUID())
+  const fallbackTracked = useRef(false)
+
+  useEffect(() => {
+    if (pathname.startsWith("/admin")) return
+
+    let sessionId = fallbackSessionId.current
+    let shouldTrack = false
+    try {
+      const savedSessionId = window.sessionStorage.getItem(
+        "portfolio-visitor-session",
+      )
+      if (savedSessionId) {
+        sessionId = savedSessionId
+      } else {
+        window.sessionStorage.setItem("portfolio-visitor-session", sessionId)
+        shouldTrack = true
+      }
+    } catch (storageError) {
+      console.warn(
+        "Could not save the anonymous visitor session.",
+        storageError,
+      )
+      shouldTrack = !fallbackTracked.current
+      fallbackTracked.current = true
+    }
+
+    if (!shouldTrack) return
+
+    fetch(apiUrl("/api/visitors"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          console.error("Could not record portfolio visit.", {
+            status: response.status,
+            response: await response.text(),
+          })
+        }
+      })
+      .catch((trackingError) => {
+        console.error("Could not record portfolio visit.", trackingError)
+      })
   }, [pathname])
 
   return null
@@ -40,6 +93,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#edf7fa] transition-colors duration-300 dark:bg-[#0f172a]">
       <ScrollToTop />
+      <PortfolioVisitTracker />
       <Routes>
         <Route element={<HomePage />} path="/" />
         <Route element={<SkillsPage />} path="/skills" />

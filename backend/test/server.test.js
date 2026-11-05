@@ -6,6 +6,10 @@ const { after, before, test } = require("node:test")
 const serverApp = require("../server")
 const { createApp } = serverApp
 const { createJsonStore } = require("../store")
+const {
+  countVisitorPeriods,
+  getKathmanduPeriodStarts,
+} = require("../visitorAnalytics")
 
 const workPayload = {
   title: "Test Project",
@@ -68,6 +72,27 @@ test("root route reports that the server is running", async () => {
   const response = await fetch(baseUrl)
   assert.equal(response.status, 200)
   assert.deepEqual(await response.json(), { status: "running" })
+})
+
+test("visitor periods follow Kathmandu calendar boundaries", () => {
+  const now = new Date("2026-11-05T05:30:00.000Z")
+  const starts = getKathmanduPeriodStarts(now)
+  assert.equal(starts.day.toISOString(), "2026-11-04T18:15:00.000Z")
+  assert.equal(starts.week.toISOString(), "2026-11-01T18:15:00.000Z")
+  assert.equal(starts.month.toISOString(), "2026-10-31T18:15:00.000Z")
+  assert.equal(starts.year.toISOString(), "2025-12-31T18:15:00.000Z")
+
+  const stats = countVisitorPeriods(
+    [
+      { visitedAt: new Date("2026-11-05T05:30:00.000Z") },
+      { visitedAt: new Date("2026-11-04T18:14:59.000Z") },
+      { visitedAt: new Date("2026-11-01T18:14:59.000Z") },
+      { visitedAt: new Date("2026-10-31T18:14:59.000Z") },
+      { visitedAt: new Date("2025-12-31T18:14:59.000Z") },
+    ],
+    now,
+  )
+  assert.deepEqual(stats, { total: 5, year: 4, month: 3, week: 2, day: 1 })
 })
 
 async function adminFetch(url, options = {}) {
@@ -163,6 +188,7 @@ test("work and blog endpoints support CRUD and persist updates", async () => {
     401,
   )
   assert.equal((await fetch(`${baseUrl}/api/auth/me`)).status, 401)
+  assert.equal((await fetch(`${baseUrl}/api/admin/visitors`)).status, 401)
   assert.equal(
     (
       await fetch(`${baseUrl}/api/auth/me`, {
@@ -171,6 +197,22 @@ test("work and blog endpoints support CRUD and persist updates", async () => {
     ).status,
     401,
   )
+
+  const visitorSession = "a22d1e6f-f89a-48b4-9c2c-839d2ef48f94"
+  const invalidVisitorResponse = await fetch(`${baseUrl}/api/visitors`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sessionId: "not-a-session-id" }),
+  })
+  assert.equal(invalidVisitorResponse.status, 400)
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const visitorResponse = await fetch(`${baseUrl}/api/visitors`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ sessionId: visitorSession }),
+    })
+    assert.equal(visitorResponse.status, 204)
+  }
 
   const invalidLoginResponse = await fetch(`${baseUrl}/api/auth/login`, {
     method: "POST",
@@ -196,6 +238,12 @@ test("work and blog endpoints support CRUD and persist updates", async () => {
   assert.match(cookie, /SameSite=Strict/i)
   adminCookie = cookie.split(";", 1)[0]
   assert.equal((await adminFetch(`${baseUrl}/api/auth/me`)).status, 200)
+  assert.deepEqual(
+    await adminFetch(`${baseUrl}/api/admin/visitors`).then((response) =>
+      response.json(),
+    ),
+    { total: 1, year: 1, month: 1, week: 1, day: 1 },
+  )
 
   const uploadForm = new FormData()
   const imageBytes = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])

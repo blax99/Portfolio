@@ -8,6 +8,8 @@ const Skill = require("./models/Skill")
 const DailyThought = require("./models/DailyThought")
 const AboutProfile = require("./models/AboutProfile")
 const AdminSession = require("./models/AdminSession")
+const PortfolioVisitor = require("./models/PortfolioVisitor")
+const { getKathmanduPeriodStarts } = require("./visitorAnalytics")
 
 const MODELS = {
   works: Work,
@@ -149,6 +151,32 @@ function createMongoStore(mongoUri) {
     await AdminSession.deleteOne({ tokenHash })
   }
 
+  async function recordVisitor(sessionHash, visitedAt) {
+    await initialize()
+    try {
+      await PortfolioVisitor.updateOne(
+        { sessionHash },
+        { $setOnInsert: { sessionHash, visitedAt } },
+        { upsert: true },
+      )
+    } catch (error) {
+      if (error.code !== 11000) throw error
+    }
+  }
+
+  async function getVisitorStats(now = new Date()) {
+    await initialize()
+    const starts = getKathmanduPeriodStarts(now)
+    const [total, year, month, week, day] = await Promise.all([
+      PortfolioVisitor.countDocuments(),
+      PortfolioVisitor.countDocuments({ visitedAt: { $gte: starts.year } }),
+      PortfolioVisitor.countDocuments({ visitedAt: { $gte: starts.month } }),
+      PortfolioVisitor.countDocuments({ visitedAt: { $gte: starts.week } }),
+      PortfolioVisitor.countDocuments({ visitedAt: { $gte: starts.day } }),
+    ])
+    return { total, year, month, week, day }
+  }
+
   return {
     initialize,
     list,
@@ -159,6 +187,8 @@ function createMongoStore(mongoUri) {
     createSession,
     getSession,
     deleteSession,
+    recordVisitor,
+    getVisitorStats,
   }
 }
 
